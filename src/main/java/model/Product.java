@@ -24,10 +24,6 @@ public class Product {
 
     }
 
-    public String getName() {
-        return this.name;
-    }
-
     public int getQuantity() {
         return this.quantity;
     }
@@ -50,5 +46,9 @@ public class Product {
 
     public boolean isQuantityZero() {
         return (this.quantity>0);
+    }
+
+    public boolean isSameProduct(String name) {
+        return (this.name.equals(name));
     }
 }

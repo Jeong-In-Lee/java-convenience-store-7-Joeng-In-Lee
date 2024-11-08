@@ -23,7 +23,7 @@ public class ReadMarkdown {
         readPromotion();
     }
 
-    public void readPromotion() {
+    private void readPromotion() {
         List<String> lines = useBufferToRead(promotionPath);
         for (String line : lines) {
             this.promotionInfoes.add(parseInput(line));
