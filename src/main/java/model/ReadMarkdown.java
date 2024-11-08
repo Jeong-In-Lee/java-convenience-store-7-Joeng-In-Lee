@@ -45,6 +45,35 @@ public class ReadMarkdown {
         return Stream.of(line.split(",")).map(String::trim).toList();
     }
 
-    
+    public List<Product> makeProductList() {
+        List<String> lines = useBufferToRead(productsPath);
+        List<Product> products = new ArrayList<>();
+        for (String line : lines) {
+            products.add(makeProduct(line));
+        }
+        return products;
+    }
+
+    private Product makeProduct(String line) {
+            List<String> parseInfo = parseInput(line);
+            if (!parseInfo.get(3).equals("null")) {
+                try {
+                    return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)),
+                            matchPromotion(parseInfo.get(3)));
+                } catch (IllegalArgumentException e){
+                    e.getMessage();
+                }
+            }
+            return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)));
+    }
+
+    private List<String> matchPromotion(String promotion) throws IllegalArgumentException{
+        for (List<String> promotionInfo : promotionInfoes) {
+            if (Objects.equals(promotionInfo.get(0), promotion)){
+                return promotionInfo;
+            }
+        }
+        throw new IllegalArgumentException(INCORRECT_PROMOTION_ERROR.getErrorMessage());
+    }
 
 }
