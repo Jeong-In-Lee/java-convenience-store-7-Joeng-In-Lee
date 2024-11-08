@@ -24,7 +24,6 @@ public class Promotion {
         this.endDate = LocalDate.parse(promotionInfo.get(4), formatter).atStartOfDay();
     }
 
-
     public Boolean checkDate() {
         LocalDateTime todayDate = camp.nextstep.edu.missionutils.DateTimes.now();
         return startDate.isBefore(todayDate) && endDate.isAfter(todayDate);

@@ -1,9 +1,6 @@
 package controller;
 
 import java.util.HashMap;
-import java.util.Map;
-import model.ControllerValidator;
-import model.Product;
 import model.ProductManager;
 import view.InputValidator;
 import view.OutputView;
@@ -12,8 +9,10 @@ public class Controller {
     private final InputValidator inputValidator = new InputValidator();
     private final ProductManager productManager = new ProductManager();
     private final OutputView outputView = new OutputView();
-//    private final ControllerValidator controllerValidator = new ControllerValidator();
     private HashMap<String, Integer> cart = new HashMap<>();
+    private HashMap<String, Integer> promotionCart = new HashMap<>();
+    private HashMap<String, Integer> nonPromotionCart = new HashMap<>();
+
 
     public Controller() {
 
@@ -22,8 +21,10 @@ public class Controller {
     public void start() {
         // 상품 정보 출력
         checkExistAndQuantity();
-
-
+        if (checkPromotionExist()) {
+            promotionProcess();
+        }
+        checkMembership();
     }
 
     private void checkExistAndQuantity() {
@@ -44,6 +45,23 @@ public class Controller {
         }
     }
 
+    private boolean checkPromotionExist() {
+        for (String order : this.cart.keySet()){
+            if(productManager.checkProductPromotionExist(order)){
+                this.promotionCart.put(order, this.cart.get(order));
+                continue;
+            }
+            this.nonPromotionCart.put(order, this.cart.get(order));
+        }
+        return (!this.promotionCart.isEmpty());
+    }
 
+    private void promotionProcess() {
+
+    }
+
+    private void checkMembership() {
+
+    }
 
 }
