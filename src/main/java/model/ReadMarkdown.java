@@ -61,7 +61,7 @@ public class ReadMarkdown {
                     return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)),
                             matchPromotion(parseInfo.get(3)));
                 } catch (IllegalArgumentException e){
-                    e.getMessage();
+                    System.out.println(e.getMessage());
                 }
             }
             return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)));
