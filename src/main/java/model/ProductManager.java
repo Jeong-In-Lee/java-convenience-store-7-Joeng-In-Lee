@@ -1,6 +1,7 @@
 package model;
 
 import static store.ErrorType.NO_PRODUCT_EXIST;
+import static store.ErrorType.OVER_THAN_PRODUCT_QUANTITY;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +18,12 @@ public class ProductManager {
         return products;
     }
 
-    public HashMap<String, Integer> checkAllProductsExist(HashMap<String, Integer> order) {
-        for (String productName : order.keySet()) {
+    public void checkAllProductsExist(HashMap<String, Integer> orders) {
+        for (String productName : orders.keySet()) {
             if (!checkProductExist(productName)){
                 throw new IllegalArgumentException(NO_PRODUCT_EXIST.getErrorMessage());
             }
         }
-        return order;
     }
 
     private boolean checkProductExist(String productName) {
@@ -34,4 +34,25 @@ public class ProductManager {
         }
         return false;
     }
+
+    public void checkProductsQuantity(HashMap<String, Integer> cart) {
+        for (String productName : cart.keySet()) {
+            if (getProductTotalQuantity(productName) < cart.get(productName)){
+                throw new IllegalArgumentException(OVER_THAN_PRODUCT_QUANTITY.getErrorMessage());
+            }
+        }
+    }
+
+    private int getProductTotalQuantity(String productName) {
+        int sum = 0;
+        for (Product product : products) {
+            if (product.isSameProduct(productName)){
+                sum += product.getQuantity();
+            }
+        }
+        return sum;
+    }
+
+
+
 }

@@ -21,27 +21,29 @@ public class Controller {
 
     public void start() {
         // 상품 정보 출력
-        checkAndAddToCart();
+        checkExistAndQuantity();
 
 
     }
 
-    private void checkAndAddToCart() {
-        while (true) {
-            try {
-                addToCart(productManager.checkAllProductsExist(inputValidator.getValidatedOrder()));
+    private void checkExistAndQuantity() {
+        while(true) {
+            try{
+                HashMap<String, Integer> orders = inputValidator.getValidatedOrder();
+                checkAndAddToCart(orders);
+                productManager.checkProductsQuantity(this.cart);
                 break;
-            } catch (IllegalArgumentException e) {
-                System.out.println(e.getMessage());
-            }
+            } catch (IllegalArgumentException e) { System.out.println(e.getMessage()); }
         }
     }
 
-    private void addToCart(HashMap<String, Integer> orders) {
+    private void checkAndAddToCart(HashMap<String, Integer> orders) {
+        productManager.checkAllProductsExist(orders);
         for (String order : orders.keySet()){
             cart.put(order, orders.get(order));
         }
     }
+
 
 
 }
