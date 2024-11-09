@@ -45,4 +45,11 @@ public class InputValidationTest {
     void YesNo_정상_작동(String input, boolean expectedBoolean) {
         assertEquals(inputValidator.checkFormatYesNo(input), expectedBoolean);
     }
+
+    @ParameterizedTest
+    @CsvSource(value = {"s", "asd", "yy", "yn","ㅁ","1"})
+    void YesNo_형식이_아닌_틀린_양식(String input) {
+        assertThatThrownBy(() -> inputValidator.checkFormatYesNo(input))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
