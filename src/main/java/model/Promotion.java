@@ -5,6 +5,7 @@ import static java.lang.Integer.parseInt;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Promotion {
@@ -17,7 +18,7 @@ public class Promotion {
     public Promotion(List<String> promotionInfo) { //String name, int buy, int get, String startDate, String endDate
         this.name = promotionInfo.get(0);
         this.buy = parseInt(promotionInfo.get(1));
-        this.get =parseInt(promotionInfo.get(2));
+        this.get = parseInt(promotionInfo.get(2));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         this.startDate = LocalDate.parse(promotionInfo.get(3), formatter).atStartOfDay();
@@ -29,4 +30,23 @@ public class Promotion {
         return startDate.isBefore(todayDate) && endDate.isAfter(todayDate);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public int getBuy() {
+        return buy;
+    }
+
+    public int getGet() {
+        return get;
+    }
+
+    // q 는 주문>프로모션 일 경우 프로모션의 재고 || 주문<프로모션 일 경우 주문 재고
+    public List<Integer> applyPromotion(int quantity) {
+        List<Integer> info = new ArrayList<>(List.of(0, 0, 0));
+        info.set(1, quantity % (this.buy + this.get));
+        info.set(0, quantity / (this.buy + this.get));
+        return info;
+    }
 }

@@ -4,11 +4,8 @@ import static store.ErrorType.INPUT_ERROR;
 import static store.ErrorType.INPUT_TYPE_ERROR;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import model.Product;
-import store.ErrorType;
 
 public class InputValidator {
     private final InputView inputView = new InputView();
@@ -25,7 +22,7 @@ public class InputValidator {
         }
     }
 
-    public LinkedHashMap<String, Integer> validateInput(String orders){
+    public LinkedHashMap<String, Integer> validateInput(String orders) {
         nullCheck(orders);
         typeCheck(orders);
         return makeOrderMap(orders);

@@ -55,19 +55,15 @@ public class ReadMarkdown {
     }
 
     private Product makeProduct(String line) {
-            List<String> parseInfo = parseInput(line);
-            if (!parseInfo.get(3).equals("null")) {
-                try {
-                    return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)),
-                            matchPromotion(parseInfo.get(3)));
-                } catch (IllegalArgumentException e){
-                    System.out.println(e.getMessage());
-                }
-            }
-            return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)));
+        List<String> parseInfo = parseInput(line);
+        if (!parseInfo.get(3).equals("null")) {
+            return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)),
+                    matchPromotion(parseInfo.get(3)));
+        }
+        return new Product(parseInfo.get(0), parseInt(parseInfo.get(1)), parseInt(parseInfo.get(2)));
     }
 
-    private List<String> matchPromotion(String promotion) throws IllegalArgumentException{
+    private List<String> matchPromotion(String promotion){
         for (List<String> promotionInfo : promotionInfoes) {
             if (Objects.equals(promotionInfo.get(0), promotion)){
                 return promotionInfo;

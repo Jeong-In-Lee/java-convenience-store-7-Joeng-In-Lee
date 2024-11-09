@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import model.ProductManager;
 import org.junit.jupiter.api.Test;
 
@@ -13,14 +14,14 @@ public class ProductManagerTest {
 
     @Test
     public void 존재하지_않는_상품() {
-        HashMap<String, Integer> testOrder = new HashMap<>();
+        LinkedHashMap<String, Integer> testOrder = new LinkedHashMap<>();
         testOrder.put("제로콜라", 10);
         assertThatThrownBy(() -> productManager.checkAllProductsExist(testOrder)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void 더_많은_수량을_주문() {
-        HashMap<String, Integer> testOrder = new HashMap<>();
+        LinkedHashMap<String, Integer> testOrder = new LinkedHashMap<>();
         testOrder.put("콜라", 35);
         assertThatThrownBy(() -> productManager.checkProductsQuantity(testOrder)).isInstanceOf(IllegalArgumentException.class);
     }
