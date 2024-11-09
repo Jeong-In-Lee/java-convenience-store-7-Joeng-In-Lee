@@ -17,6 +17,7 @@ public class Controller {
     private final LinkedHashMap<String, Integer> nonPromotionCart = new LinkedHashMap<>();
     private final LinkedHashMap<String, List<Integer>> forPromotionPrint = new LinkedHashMap<>();
     private int membershipDiscount = 0;
+    private static final int MEMBERSHIP_LIMIT = 8000;
 
 
     public Controller() {
@@ -30,7 +31,7 @@ public class Controller {
             promotionProcess();
         }
         replyNonPromotionProduct();
-        checkMembership();
+        membershipDiscount = checkMembership();
         receiptPrintControll();
     }
 
@@ -110,8 +111,7 @@ public class Controller {
     private void checkExistAndQuantity() {
         while (true) {
             try {
-                LinkedHashMap<String, Integer> orders = inputValidator.getValidatedOrder();
-                checkAndAddToCart(orders);
+                checkAndAddToCart(inputValidator.getValidatedOrder());
                 productManager.checkProductsQuantity(this.cart);
                 break;
             } catch (IllegalArgumentException e) {
@@ -207,9 +207,15 @@ public class Controller {
         prod.setQuantity(prod.getQuantity() - cart.get(prod.getName()));
     }
 
-    private void checkMembership() {
-        int sum = totalCost(nonPromotionCart);
-        membershipDiscount = (int) (sum * 0.3);
+    private int checkMembership() {
+        if (inputValidator.getMembershipDiscount()) {
+            int sum = totalCost(nonPromotionCart);
+            if ((int) (sum * 0.3) >= MEMBERSHIP_LIMIT) {
+                return MEMBERSHIP_LIMIT;
+            }
+            return (int) (sum * 0.3);
+        }
+        return 0;
     }
 
     private void resetCart() {
@@ -217,6 +223,7 @@ public class Controller {
         promotionCart.clear();
         nonPromotionCart.clear();
         forPromotionPrint.clear();
+        membershipDiscount = 0;
     }
 
 }

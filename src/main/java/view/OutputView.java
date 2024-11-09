@@ -7,12 +7,20 @@ public class OutputView {
     public void printProduct(List<Product> products) {
         System.out.println("안녕하세요. w편의점입니다.\n현재 보유하고 있는 상품입니다.\n");
         for (Product product : products) {
+            String quantity = printQuantity(product.getQuantity());
             System.out.println(
-                    "- " + product.getName() + " " + String.format("%,d", product.getPrice()) + "원 " + String.format(
-                            "%,d",
-                            product.getQuantity()) + "개 " + printPromotionOrNot(product));
+                    "- " + product.getName() + " " + String.format("%,d", product.getPrice()) + "원 " + quantity
+                            + printPromotionOrNot(product));
         }
     }
+
+    private String printQuantity(Integer quantity) {
+        if (quantity == 0) {
+            return "재고 없음";
+        }
+        return String.format("%,d개 ", quantity);
+    }
+
 
     private String printPromotionOrNot(Product product) {
         if (product.getIsPromotion()) {

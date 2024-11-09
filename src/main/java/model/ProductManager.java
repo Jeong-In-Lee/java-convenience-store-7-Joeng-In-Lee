@@ -3,6 +3,7 @@ package model;
 import static store.ErrorType.NO_PRODUCT_EXIST;
 import static store.ErrorType.OVER_THAN_PRODUCT_QUANTITY;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class ProductManager {
     public ProductManager() {
         try {
             this.products = readMarkdown.makeProductList();
+            productValidate();
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
@@ -21,6 +23,32 @@ public class ProductManager {
     public List<Product> getProducts() {
         return products;
     }
+
+    public void productValidate() {
+        LinkedHashMap<String, List<Integer>> check = checkPromotionWithNormal();
+        int indexPushed = 1;
+        for (String name : check.keySet()) {
+            if (check.get(name).get(0) == 1) {
+                products.add(check.get(name).get(1) + indexPushed++,
+                        new Product(name, getProduct(name).getPrice(), 0));
+            }
+        }
+    }
+
+    private LinkedHashMap<String, List<Integer>> checkPromotionWithNormal() {
+        LinkedHashMap<String, List<Integer>> check = new LinkedHashMap<>();
+        for (int i = 0; i < products.size(); i++) {
+            if (products.get(i).getIsPromotion()) {
+                check.put(products.get(i).getName(), new ArrayList<>(List.of(checkPairNum(products.get(i), i), i)));
+            }
+        }
+        return check;
+    }
+
+    private int checkPairNum(Product prod, int i) {
+        return (int) products.stream().filter(product -> product.getName().equals(products.get(i).getName())).count();
+    }
+
 
     public void checkAllProductsExist(LinkedHashMap<String, Integer> orders) {
         for (String productName : orders.keySet()) {
