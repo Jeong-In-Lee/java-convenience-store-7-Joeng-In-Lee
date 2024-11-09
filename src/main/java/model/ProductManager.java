@@ -58,12 +58,13 @@ public class ProductManager {
     }
 
     public boolean checkProductPromotionExist(String productName) {
+        boolean exist = false;
         for (Product product : products) {
-            if (product.isSameProduct(productName)) {
-                return product.getIsPromotion();
+            if (product.isSameProduct(productName) && product.getIsPromotion()) {
+                exist = true;
             }
         }
-        throw new IllegalStateException("[ERROR] Product should exist in the list 1 "); // return 처리하기 위함
+        return exist;
     }
 
     public boolean orderIsBiggerThanPromotionQuantity(String productName, int orderQuantity) {

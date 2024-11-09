@@ -16,6 +16,7 @@ public class Controller {
     private final LinkedHashMap<String, Integer> promotionCart = new LinkedHashMap<>();
     private final LinkedHashMap<String, Integer> nonPromotionCart = new LinkedHashMap<>();
     private final LinkedHashMap<String, List<Integer>> forPromotionPrint = new LinkedHashMap<>();
+    private int membershipDiscount = 0;
 
 
     public Controller() {
@@ -36,11 +37,54 @@ public class Controller {
     private void receiptPrintControll() {
         outputView.printPurchasedProduct(purchasedProduct());
         printPromotionPart();
-//        outputView.printMoney();
+        List<Integer> money = calculateMoney();
+        outputView.printMoney(money.get(0), money.get(1), money.get(2), money.get(3), money.get(4));
         restartOrNot();
     }
 
-    
+    private List<Integer> calculateMoney() {
+        List<Integer> money = new ArrayList<>(List.of(0, 0, 0, 0, 0));
+        money.set(0, cart.values().stream().mapToInt(Integer::intValue).sum());
+        money.set(1, totalCost());
+        money.set(2, discountByPromotion());
+        money.set(3, membershipDiscount * -1);
+        money.set(4, totalCost() - discountByPromotion() - membershipDiscount);
+        return money;
+    }
+
+    private int totalCost() {
+        int sum = 0;
+        for (String name : cart.keySet()) {
+            sum += cart.get(name) * productManager.getProduct(name).getPrice();
+        }
+        return sum;
+    }
+
+    private int discountByPromotion() {
+        int sum = 0;
+        for (String name : forPromotionPrint.keySet()) {
+            sum += forPromotionPrint.get(name).get(0) * productManager.getProduct(name).getPrice();
+        }
+        return (sum * -1);
+    }
+
+    private void printPromotionPart() {
+        List<List<String>> forReceipt = makePromotionProduct();
+        if (!forReceipt.isEmpty()) {
+            outputView.printPromotion(forReceipt);
+        }
+    }
+
+    private List<List<String>> makePromotionProduct() {
+        List<List<String>> forReturn = new ArrayList<>();
+        for (String productName : forPromotionPrint.keySet()) {
+            if (forPromotionPrint.get(productName).get(0) != 0) {
+                forReturn.add(List.of(productName, forPromotionPrint.get(productName).get(0).toString()));
+            }
+        }
+        return forReturn;
+    }
+
     private List<List<String>> purchasedProduct() {
         List<List<String>> forReturn = new ArrayList<>();
         for (String productName : cart.keySet()) {
@@ -94,8 +138,7 @@ public class Controller {
         return (!this.promotionCart.isEmpty());
     }
 
-    // 양 감당 가능 프로모션 양만큼 가져왔는지 check
-    // 양 적을 때
+    // 양 감당 가능 프로모션 양만큼 가져왔는지 check || 양 적을 때
     private void promotionProcess() {
         for (String promotionProductName : this.promotionCart.keySet()) {
             if (productManager.orderIsBiggerThanPromotionQuantity(promotionProductName, //주문 > 프로모션재고
@@ -138,17 +181,24 @@ public class Controller {
     //주문량 <= 프로모션 재고 || 첫번째 if 프로모션인데 안들고 옴 && 증정해도 재고수량 안넘는가? || 두번째 if 증정 받을지 사용자 input
     private void whenOrderIsLessThanPromotionQuantity(Product prod) {
         List<Integer> promotionApply = prod.getPromotion().applyPromotion(this.promotionCart.get(prod.getName()));
-        if (promotionApply.get(1).equals(prod.getPromotion().getBuy()) && (
-                promotionCart.get(prod.getName()) + prod.getPromotion().getGet() <= prod.getQuantity())) {
-            if (inputValidator.getMorePromotion(prod.getName(), prod.getPromotion().getGet())) {
-                updateAllCart(prod, promotionApply);
-            }
-        }
+        promotionApply = checkPromotionEnough(prod, promotionApply);
+        forPromotionPrint.put(prod.getName(), promotionApply);
         replyOrderToProductManager(prod);
     }
 
-    private void updateAllCart(Product prod, List<Integer> promotionApply) {
-        forPromotionPrint.put(prod.getName(), new ArrayList<>(List.of((promotionApply.get(0) + 1), 0, 0)));
+    private List<Integer> checkPromotionEnough(Product prod, List<Integer> promotionApply) {
+        if (promotionApply.get(1).equals(prod.getPromotion().getBuy()) && (
+                promotionCart.get(prod.getName()) + prod.getPromotion().getGet() <= prod.getQuantity())) {
+            if (inputValidator.getMorePromotion(prod.getName(), prod.getPromotion().getGet())) {
+                promotionApply = new ArrayList<>(List.of((promotionApply.get(0) + 1), 0, 0));
+                updateAllCart(prod);
+            }
+        }
+        return promotionApply;
+    }
+
+
+    private void updateAllCart(Product prod) {
         cart.put(prod.getName(), cart.get(prod.getName()) + prod.getPromotion().getGet());
         promotionCart.put(prod.getName(), cart.get(prod.getName()) + prod.getPromotion().getGet());
     }

@@ -42,8 +42,8 @@ public class OutputView {
     public void printMoney(int totCount, int totMoney, int promotionMoney, int membershipMoney, int purchaseMoney) {
         System.out.printf("%s\n", "=".repeat(45));
         System.out.printf("%-20s %-10s %10s\n", "총구매액", String.format("%,d", totCount), String.format("%,d", totMoney));
-        System.out.printf("%-31s -%9s\n", "행사할인", String.format("%,d", promotionMoney));
-        System.out.printf("%-31s -%9s\n", "멤버십할인", String.format("%,d", membershipMoney));
+        System.out.printf("%-31s %10s\n", "행사할인", String.format("%,d", promotionMoney));
+        System.out.printf("%-31s %10s\n", "멤버십할인", String.format("%,d", membershipMoney));
         System.out.printf("%-30s %10s\n", "내실돈", String.format("%,d", purchaseMoney));
     }
 }

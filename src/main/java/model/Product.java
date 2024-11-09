@@ -20,7 +20,7 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.promotion = new Promotion(promotionInfo);
-        if (this.promotion.checkDate()){
+        if (this.promotion.checkDate()) {
             this.isPromotion = true;
         }
     }
@@ -48,10 +48,6 @@ public class Product {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
-
-//    public boolean isQuantityZero() {
-//        return (this.quantity>0);
-//    }
 
     public boolean isSameProduct(String name) {
         return (this.name.equals(name));
