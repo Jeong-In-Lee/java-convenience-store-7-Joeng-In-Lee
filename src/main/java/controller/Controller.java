@@ -28,8 +28,26 @@ public class Controller {
         if (checkPromotionExist()) {
             promotionProcess();
         }
-        // 일반 상품 차감도 진행하기
+        replyNonPromotionProduct();
         checkMembership();
+        reciptPrintControll();
+    }
+
+    private void reciptPrintControll() {
+        restartOrNot();
+    }
+
+    private void restartOrNot() {
+        if (inputValidator.getMorePurchase()) {
+            resetCart();
+            start();
+        }
+    }
+
+    private void replyNonPromotionProduct() {
+        for (String prodName : nonPromotionCart.keySet()) {
+            replyOrderToProductManager(productManager.getProduct(prodName));
+        }
     }
 
     private void checkExistAndQuantity() {
@@ -78,7 +96,30 @@ public class Controller {
 
 
     private void whenOrderIsBiggerThanPromotionQuantity(Product prod) {
-        
+        List<Integer> promotionApply = prod.getPromotion().applyPromotion(prod.getQuantity());
+        promotionApply.set(2,
+                (cart.get(prod.getName()) - promotionApply.get(0) * (prod.getPromotion().getSet()) - promotionApply.get(
+                        1)));
+        if (!inputValidator.getBuyWithoutPromotion(prod.getName(), promotionApply.get(1) + promotionApply.get(2))) {
+            promotionApply = new ArrayList<>(List.of(promotionApply.get(0), 0, 0));
+        }
+        replyOrderToProductPair(getPairProducts(prod), promotionApply);
+    }
+
+    private void replyOrderToProductPair(List<Product> pair, List<Integer> promotionApply) {
+        Product p1 = pair.get(0);
+        Product p2 = pair.get(1);
+        forPromotionPrint.put(p1.getName(), promotionApply);
+
+        p1.setQuantity(p1.getQuantity() - forPromotionPrint.get(p1.getName()).get(0) * p1.getPromotion().getSet()
+                - forPromotionPrint.get(p1.getName()).get(1));
+        p2.setQuantity(p2.getQuantity() - forPromotionPrint.get(p2.getName()).get(2));
+    }
+
+    private List<Product> getPairProducts(Product prod) {
+        return productManager.getProducts().stream()
+                .filter(product -> product.getName().equals(prod.getName()))
+                .sorted((p1, p2) -> Boolean.compare(p2.getIsPromotion(), p1.getIsPromotion())).toList();
     }
 
     //주문량 <= 프로모션 재고 || 첫번째 if 프로모션인데 안들고 옴 && 증정해도 재고수량 안넘는가? || 두번째 if 증정 받을지 사용자 input
@@ -90,7 +131,7 @@ public class Controller {
                 updateAllCart(prod, promotionApply);
             }
         }
-        replyOrderToProduct(prod);
+        replyOrderToProductManager(prod);
     }
 
     private void updateAllCart(Product prod, List<Integer> promotionApply) {
@@ -99,12 +140,19 @@ public class Controller {
         promotionCart.put(prod.getName(), cart.get(prod.getName()) + prod.getPromotion().getGet());
     }
 
-    private void replyOrderToProduct(Product prod) {
+    private void replyOrderToProductManager(Product prod) {
         prod.setQuantity(prod.getQuantity() - cart.get(prod.getName()));
     }
 
     private void checkMembership() {
 
+    }
+
+    private void resetCart() {
+        cart.clear();
+        promotionCart.clear();
+        nonPromotionCart.clear();
+        forPromotionPrint.clear();
     }
 
 }
