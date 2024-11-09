@@ -66,7 +66,7 @@ public class Controller {
         for (String name : forPromotionPrint.keySet()) {
             sum += forPromotionPrint.get(name).get(0) * productManager.getProduct(name).getPrice();
         }
-        return (sum * -1);
+        return sum;
     }
 
     private void printPromotionPart() {

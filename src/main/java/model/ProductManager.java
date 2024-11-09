@@ -98,7 +98,7 @@ public class ProductManager {
     public boolean orderIsBiggerThanPromotionQuantity(String productName, int orderQuantity) {
         for (Product product : products) {
             if (product.isSameProduct(productName) && product.getIsPromotion()) {
-                return (product.getQuantity() <= orderQuantity);
+                return (product.getQuantity() < orderQuantity);
             }
         }
         return false;
