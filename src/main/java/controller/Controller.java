@@ -45,17 +45,17 @@ public class Controller {
     private List<Integer> calculateMoney() {
         List<Integer> money = new ArrayList<>(List.of(0, 0, 0, 0, 0));
         money.set(0, cart.values().stream().mapToInt(Integer::intValue).sum());
-        money.set(1, totalCost());
+        money.set(1, totalCost(cart));
         money.set(2, discountByPromotion());
         money.set(3, membershipDiscount * -1);
-        money.set(4, totalCost() - discountByPromotion() - membershipDiscount);
+        money.set(4, totalCost(cart) - discountByPromotion() - membershipDiscount);
         return money;
     }
 
-    private int totalCost() {
+    private int totalCost(LinkedHashMap<String, Integer> cartToSum) {
         int sum = 0;
-        for (String name : cart.keySet()) {
-            sum += cart.get(name) * productManager.getProduct(name).getPrice();
+        for (String name : cartToSum.keySet()) {
+            sum += cartToSum.get(name) * productManager.getProduct(name).getPrice();
         }
         return sum;
     }
@@ -208,7 +208,8 @@ public class Controller {
     }
 
     private void checkMembership() {
-
+        int sum = totalCost(nonPromotionCart);
+        membershipDiscount = (int) (sum * 0.3);
     }
 
     private void resetCart() {
