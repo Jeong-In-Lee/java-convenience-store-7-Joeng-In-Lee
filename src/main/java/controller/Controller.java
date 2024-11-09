@@ -32,10 +32,10 @@ public class Controller {
         }
         replyNonPromotionProduct();
         membershipDiscount = checkMembership();
-        receiptPrintControll();
+        receiptPrintControl();
     }
 
-    private void receiptPrintControll() {
+    private void receiptPrintControl() {
         outputView.printPurchasedProduct(purchasedProduct());
         printPromotionPart();
         List<Integer> money = calculateMoney();
