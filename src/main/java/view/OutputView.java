@@ -8,13 +8,14 @@ public class OutputView {
         System.out.println("안녕하세요. w편의점입니다.\n현재 보유하고 있는 상품입니다.\n");
         for (Product product : products) {
             System.out.println(
-                    "- " + product.getName() + " " + String.format("%,d", product.getPrice()) + "원 " + String.format("%,d",
+                    "- " + product.getName() + " " + String.format("%,d", product.getPrice()) + "원 " + String.format(
+                            "%,d",
                             product.getQuantity()) + "개 " + printPromotionOrNot(product));
         }
     }
 
     private String printPromotionOrNot(Product product) {
-        if (product.getIsPromotion()){
+        if (product.getIsPromotion()) {
             return product.getPromotion().getName();
         }
         return "";
@@ -22,6 +23,7 @@ public class OutputView {
 
     public void printPurchasedProduct(List<List<String>> list) {
         System.out.printf("%sW 편의점%s\n", "=".repeat(20), "=".repeat(20));
+        System.out.printf("%-20s %-10s %10s\n", "상품명", "수량", "금액");
         for (List<String> printString : list) {
             System.out.printf("%-20s %-10s %10s\n", printString.get(0),
                     String.format("%,d", Integer.parseInt(printString.get(1))),

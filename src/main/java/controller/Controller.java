@@ -30,11 +30,24 @@ public class Controller {
         }
         replyNonPromotionProduct();
         checkMembership();
-        reciptPrintControll();
+        receiptPrintControll();
     }
 
-    private void reciptPrintControll() {
+    private void receiptPrintControll() {
+        outputView.printPurchasedProduct(purchasedProduct());
+        printPromotionPart();
+//        outputView.printMoney();
         restartOrNot();
+    }
+
+    
+    private List<List<String>> purchasedProduct() {
+        List<List<String>> forReturn = new ArrayList<>();
+        for (String productName : cart.keySet()) {
+            Integer cost = productManager.getProduct(productName).getPrice() * cart.get(productName);
+            forReturn.add(List.of(productName, cart.get(productName).toString(), cost.toString()));
+        }
+        return forReturn;
     }
 
     private void restartOrNot() {
